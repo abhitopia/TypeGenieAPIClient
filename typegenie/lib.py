@@ -186,12 +186,12 @@ class Dataset:
         return self._id
 
     def update(self, metadata):
-        deployment_api = authenticator.get_deployment_api(deployment_api=self._deployment_id)
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
         deployment_api.update_dataset(dataset_id=self._id, metadata=metadata)
         self._metadata = metadata
 
     def upload(self, dialogues: List[Dialogue]):
-        deployment_api = authenticator.get_deployment_api(deployment_api=self._deployment_id)
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
         deployment_api.upload_dialogues(dataset_id=self._id, dialogues=[d.to_dict() for d in dialogues])
 
     @staticmethod
@@ -320,7 +320,7 @@ class Deployment:
         if create:
             assert user_id is not None, "`user_id` must be provided to create a Dataset"
             deployment_api.add_user(user_id=user_id, metadata=metadata)
-            return User.from_dict(deployment_api.get_user(dataset_id=user_id))
+            return User.from_dict(deployment_api.get_user(user_id=user_id))
         else:
             if user_id is None:
                 return [User.from_dict(r) for r in deployment_api.list_users()]
@@ -374,7 +374,7 @@ class User:
         return self._id
 
     def update(self, metadata):
-        deployment_api = authenticator.get_deployment_api(deployment_api=self._deployment_id)
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
         deployment_api.update_user(user_id=self._id, metadata=metadata)
         self._metadata = metadata
 
