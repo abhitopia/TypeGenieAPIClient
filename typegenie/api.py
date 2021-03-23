@@ -96,20 +96,25 @@ class AccountAPI(API):
         return self._get(self.DEPLOYMENT_SUFFIX)
 
     def create_deployment(self, deployment_id, metadata={}):
+        assert isinstance(deployment_id, str)
         payload = {'id': deployment_id, 'metadata': metadata}
         return self._post(self.DEPLOYMENT_SUFFIX, json=payload)
 
     def update_deployement(self, deployment_id, metadata):
+        assert isinstance(deployment_id, str)
         payload = {'metadata': metadata}
         return self._put(f'{self.DEPLOYMENT_SUFFIX}/{deployment_id}', json=payload)
 
     def delete_deployment(self, deployment_id):
+        assert isinstance(deployment_id, str)
         return self._delete(f'{self.DEPLOYMENT_SUFFIX}/{deployment_id}')
 
     def get_deployment(self, deployment_id):
+        assert isinstance(deployment_id, str)
         return self._get(f'{self.DEPLOYMENT_SUFFIX}/{deployment_id}')
 
     def get_deployment_access_token(self, deployment_id):
+        assert isinstance(deployment_id, str)
         return self._get(f'{self.DEPLOYMENT_SUFFIX}/{deployment_id}/token')
 
 
@@ -141,6 +146,7 @@ class DeploymentAPI(API):
 
     # Dataset Endpoints
     def create_dataset(self, dataset_id, metadata={}):
+        assert isinstance(dataset_id, str)
         payload = {'id': dataset_id, 'metadata': metadata}
         return self._post(self.DATASET_SUFFIX, json=payload)
 
@@ -148,16 +154,20 @@ class DeploymentAPI(API):
         return self._get(self.DATASET_SUFFIX)
 
     def get_dataset(self, dataset_id):
+        assert isinstance(dataset_id, str)
         return self._get(f'{self.DATASET_SUFFIX}/{dataset_id}')
 
     def update_dataset(self, dataset_id, metadata):
+        assert isinstance(dataset_id, str)
         payload = {'metadata': metadata}
         return self._put(f'{self.DATASET_SUFFIX}/{dataset_id}', json=payload)
 
     def delete_dataset(self, dataset_id):
+        assert isinstance(dataset_id, str)
         return self._delete(f'{self.DATASET_SUFFIX}/{dataset_id}')
 
     def upload_dialogues(self, dataset_id, dialogues):
+        assert isinstance(dataset_id, str)
         payload = {'dialogues': dialogues}
         return self._post(f'{self.DATASET_SUFFIX}/{dataset_id}', json=payload)
 
@@ -177,6 +187,7 @@ class DeploymentAPI(API):
 
     # Agent Endpoints
     def add_user(self, user_id, metadata={}):
+        assert isinstance(user_id, str)
         payload = {'id': user_id, 'metadata': metadata}
         return self._post(self.USER_SUFFIX, json=payload)
 
@@ -184,16 +195,20 @@ class DeploymentAPI(API):
         return self._get(f'{self.USER_SUFFIX}')
 
     def get_user(self, user_id):
+        assert isinstance(user_id, str)
         return self._get(f'{self.USER_SUFFIX}/{user_id}')
 
     def update_user(self, user_id, metadata):
+        assert isinstance(user_id, str)
         payload = {'metadata': metadata}
         return self._put(f'{self.USER_SUFFIX}/{user_id}', json=payload)
 
     def delete_user(self, user_id):
+        assert isinstance(user_id, str)
         return self._delete(f'{self.USER_SUFFIX}/{user_id}')
 
     def get_user_access_token(self, user_id):
+        assert isinstance(user_id, str)
         return self._get(f'{self.USER_SUFFIX}/{user_id}/token')
 
 
@@ -225,5 +240,6 @@ class UserAPI(API):
         return self._post(self.SESSION_SUFFIX, json={})
 
     def get_completions(self, session_id, events, query: str):
+        assert isinstance(session_id, str)
         payload = {'query': query, 'events': events}
         return self._post(f'{self.SESSION_SUFFIX}/{session_id}/completions', json=payload)
