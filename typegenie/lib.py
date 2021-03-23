@@ -205,14 +205,17 @@ class Dataset:
         dataset._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
         return dataset
 
+    def delete(self):
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
+        deployment_api.delete_dataset(dataset_id=self._id)
+        self._id = None
+
     def __del__(self):
         # Only delete from database when user explicitly deleted the instance
         trace = traceback.format_stack()
         user_called = True if len(trace) >= 2 and ' del ' in trace[-2] else False
         if user_called and self._id is not None:
-            deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
-            deployment_api.delete_dataset(dataset_id=self._id)
-            self._id = None
+            self.delete()
 
     def __repr__(self):
         return repr(self.to_dict())
@@ -234,6 +237,10 @@ class Deployment:
         self._created_at = None
         self._dataset = None
 
+    @property
+    def id(self):
+        return self._id
+
     @staticmethod
     def create(deployment_id, metadata):
         account_api = authenticator.get_account_api()
@@ -248,8 +255,12 @@ class Deployment:
 
     @staticmethod
     def get(deployment_id):
-        account_api = authenticator.get_account_api()
-        json = account_api.get_deployment(deployment_id=deployment_id)
+        try:
+            account_api = authenticator.get_account_api()
+            json = account_api.get_deployment(deployment_id=deployment_id)
+        except RuntimeError:
+            deployment_api = authenticator.get_deployment_api(deployment_id=deployment_id)
+            json = deployment_api.info()
         return Deployment.from_dict(json)
 
     def update(self, metadata):
@@ -280,14 +291,17 @@ class Deployment:
         deployment_api = authenticator.get_deployment_api(deployment_id=self._id)
         return [Configuration.from_dict(c) for c in deployment_api.list_model_configs()]
 
+    def delete(self):
+        account_api = authenticator.get_account_api()
+        account_api.delete_deployment(deployment_id=self._id)
+        self._id = None
+
     def __del__(self):
         # Only delete from database when user explicitly deleted the instance
         trace = traceback.format_stack()
         user_called = True if len(trace) >= 2 and ' del ' in trace[-2] else False
         if user_called and self._id is not None:
-            account_api = authenticator.get_account_api()
-            account_api.delete_deployment(deployment_id=self._id)
-            self._id = None
+            self.delete()
 
     def datasets(self, dataset_id=None, create=False, metadata={}):
         deployment_api = authenticator.get_deployment_api(deployment_id=self._id)
@@ -342,6 +356,11 @@ class Deployment:
         }
         return json
 
+    @staticmethod
+    def get_access_token(deployment_id):
+        account_api = authenticator.get_account_api()
+        return account_api.get_deployment_access_token(deployment_id=deployment_id)
+
 
 class User:
     def __init__(self):
@@ -349,6 +368,10 @@ class User:
         self._deployment_id = None
         self._metadata = None
         self._created_at = None
+
+    @property
+    def id(self):
+        return self._id
 
     def update(self, metadata):
         deployment_api = authenticator.get_deployment_api(deployment_api=self._deployment_id)
@@ -378,11 +401,14 @@ class User:
         user._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
         return user
 
+    def delete(self):
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
+        deployment_api.delete_user(user_id=self._id)
+        self._id = None
+
     def __del__(self):
         # Only delete from database when user explicitly deleted the instance
         trace = traceback.format_stack()
         user_called = True if len(trace) >= 2 and ' del ' in trace[-2] else False
         if user_called and self._id is not None:
-            deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
-            deployment_api.delete_user(user_id=self._id)
-            self._id = None
+            self.delete()
