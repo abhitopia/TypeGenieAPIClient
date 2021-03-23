@@ -1,2 +1,4 @@
 # TypeGenieApiClient
-Python API client to access TypeGenie API:- http:api.typegenie.net
+Python API client to access TypeGenie API: [Documentation](http:api.typegenie.net)
+
+
