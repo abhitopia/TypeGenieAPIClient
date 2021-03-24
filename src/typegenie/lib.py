@@ -182,10 +182,27 @@ class Dataset:
         self._id = None
         self._deployment_id = None
         self._metadata = None
+        self._num_dialogues = None
 
     @property
     def id(self):
         return self._id
+
+    @property
+    def deployment_id(self):
+        return self._deployment_id
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @property
+    def created_at(self):
+        return self._created_at
+
+    @property
+    def num_dialogues(self):
+        return self._num_dialogues
 
     def update(self, metadata):
         deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
@@ -204,6 +221,7 @@ class Dataset:
         dataset._id = json['id']
         dataset._metadata = metadata
         dataset._deployment_id = json['deployment_id']
+        dataset._num_dialogues = json['num_dialogues']
         dataset._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
         return dataset
 
@@ -231,6 +249,7 @@ class Dataset:
             'id': self._id,
             'metadata': self._metadata,
             'created_at': self._created_at.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+            'num_dialogues': self._num_dialogues,
             'deployment_id': self._deployment_id
         }
         return json
@@ -378,6 +397,18 @@ class User:
     @property
     def id(self):
         return self._id
+
+    @property
+    def deployment_id(self):
+        return self._deployment_id
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @property
+    def created_at(self):
+        return self._created_at
 
     def update(self, metadata):
         deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
