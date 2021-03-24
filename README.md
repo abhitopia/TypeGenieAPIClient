@@ -1,4 +1,4 @@
-# TypeGenieApiClient
+# TypeGenieAPIClient
 Python API client to access TypeGenie API. 
 
 # Documentation
