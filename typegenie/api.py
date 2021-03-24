@@ -157,6 +157,10 @@ class DeploymentAPI(API):
         assert isinstance(dataset_id, str)
         return self._get(f'{self.DATASET_SUFFIX}/{dataset_id}')
 
+    def download_dataset(self, dataset_id):
+        assert isinstance(dataset_id, str)
+        return self._get(f'{self.DATASET_SUFFIX}/{dataset_id}/download')
+
     def update_dataset(self, dataset_id, metadata):
         assert isinstance(dataset_id, str)
         payload = {'metadata': metadata}

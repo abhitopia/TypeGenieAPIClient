@@ -210,6 +210,10 @@ class Dataset:
         deployment_api.delete_dataset(dataset_id=self._id)
         self._id = None
 
+    def get_download_links(self):
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._deployment_id)
+        return deployment_api.download_dataset(dataset_id=self._id)
+
     def __del__(self):
         # Only delete from database when user explicitly deleted the instance
         trace = traceback.format_stack()
