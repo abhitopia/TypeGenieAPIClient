@@ -7,6 +7,9 @@ with open("README.md", "r") as fh:
 setup(
     name='typegenie',
     version='0.0.1',
+    url="https://github.com/abhitopia/TypeGenieApiClient",
+    author="abhitopia",
+    author_email="hi@typegenie.net",
     description='Client Library for TypeGenie API. Check out http://api.typegenie.net for more info.',
     long_description=long_description,
     long_description_context_type="text/markdown",
