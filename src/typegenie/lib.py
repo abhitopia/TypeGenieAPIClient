@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import List, Union
 
-from typegenie.api import AccountAPI, DeploymentAPI, UserAPI
+from src.typegenie.api import AccountAPI, DeploymentAPI, UserAPI
 import pandas as pd
 import traceback
 
@@ -101,6 +101,11 @@ class Configuration:
         return json
 
 
+class EventType(Enum):
+    CONTEXTUAL = "CONTEXTUAL"
+    MESSAGE = "MESSAGE"
+
+
 class Author(Enum):
     SYSTEM = "SYSTEM"
     AGENT = "AGENT"
@@ -108,17 +113,14 @@ class Author(Enum):
 
 
 class Event:
-    CONTEXTUAL = "CONTEXTUAL"
-    MESSAGE = "MESSAGE"
-
-
-class DialogueEvent:
-    def __init__(self, author_id: str, author: Author, event: Event, value: str, timestamp: Union[str, datetime]):
+    def __init__(self, author_id: str, author: Author, event: EventType, value: str,
+                 timestamp: Union[str, datetime]):
         self._author_id = author_id
         self._author = author.name
         self._event = event.name
         self._value = value
-        self._timestamp = timestamp if isinstance(timestamp, datetime) else pd.to_datetime(timestamp).to_pydatetime().replace(tzinfo=timezone.utc)
+        self._timestamp = timestamp if isinstance(timestamp, datetime) else pd.to_datetime(
+            timestamp).to_pydatetime().replace(tzinfo=timezone.utc)
 
     def to_dict(self):
         json = {
@@ -135,7 +137,7 @@ class Dialogue:
     def __init__(self, dialogue_id, metadata={}):
         self.id = dialogue_id
         self.metadata = metadata
-        self.events: List[DialogueEvent] = None
+        self.events: List[Dialogue.Event] = []
 
     def to_dict(self):
         json = {

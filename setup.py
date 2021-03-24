@@ -1,0 +1,25 @@
+from setuptools import setup, find_packages
+
+
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setup(
+    name='typegenie',
+    version='0.0.1',
+    description='Client Library for TypeGenie API. Check out http://api.typegenie.net for more info.',
+    long_description=long_description,
+    long_description_context_type="text/markdown",
+    packages=find_packages('src', include=['typegenie', 'typegenie.*']),
+    # py_modules=[''],
+    package_dir={'': 'src'},
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3"
+    ],
+    install_requires=[
+        "pandas",
+        "requests"
+    ]
+)
