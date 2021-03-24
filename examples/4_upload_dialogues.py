@@ -5,7 +5,8 @@ from datetime import datetime
 deployment_id = 'my-new-deployment'
 
 # Authentication
-DEPLOYMENT_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBsb3ltZW50X2lkIjoibXktbmV3LWRlcGxveW1lbnQiLCJhY2NvdW50X2lkIjoiS1VORE9TRSIsImV4cCI6MTYxNjU4NTAzMCwic2VxX251bSI6MSwiaWF0IjoxNjE2NTgxNDMwfQ.PKAsjphFyEWlYznoaA0Bwa8oFVOI6b7NTGtrIkiNOJM'
+DEPLOYMENT_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBsb3ltZW50X2lkIjoibXktbmV3LWRlcGxveW1lbnQiLCJhY2NvdW50X2lkIjoiS1VORE9TRSIsImV4cCI6MTYxNjYxNjAwNSwic2VxX251bSI6MSwiaWF0IjoxNjE2NjEyNDA1fQ.7Jxbrizrm76zmjmeUnFvD6URasSOA-dEY_EKVNNyjag'
+
 
 ACCOUNT_USERNAME = None
 ACCOUNT_PASSWORD = None
@@ -86,4 +87,5 @@ existing_dataset.upload(dialogues=[my_dialogue_1, my_dialogue_2])
 
 # download
 download_links = existing_dataset.get_download_links()
+print(download_links)
 doSomething = 1
