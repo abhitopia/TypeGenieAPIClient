@@ -15,16 +15,32 @@ class __Authenticator:
         self._automatic_fallback = False
         self._automatic_renew = False
 
+    def is_account_authenticated(self):
+        return self._account_api is not None
+
+    def is_deployment_authenticated(self, deployment_id):
+        return deployment_id in self._deployment_api
+
+    def is_user_authenticated(self, user_id, deployment_id):
+        return (user_id, deployment_id) in self._user_api
+
     def authenticate_account(self, username, password):
         self._account_api = AccountAPI(username=username, password=password)
 
-    def authenticate_deployment(self, deployment_id, token):
-        self._deployment_api[deployment_id] = DeploymentAPI(token=token)
+    def authenticate_deployment(self, token):
+        deployment_api = DeploymentAPI(token=token)
+        deployment_id = deployment_api.info()['id']
+        self._deployment_api[deployment_id] = deployment_api
+
         if self._automatic_renew:
             self._deployment_api[deployment_id].enable_auto_renew()
 
-    def authenticate_user(self, deployment_id, user_id, token):
-        self._user_api[(deployment_id, user_id)] = UserAPI(token=token)
+    def authenticate_user(self, token):
+        user_api = UserAPI(token=token)
+        user_info = user_api.info()
+        user_id = user_info['id']
+        deployment_id = user_info['deployment_id']
+        self._user_api[(deployment_id, user_id)] = user_api
         if self._automatic_renew:
             self._user_api[(deployment_id, user_id)].enable_auto_renew()
 
@@ -50,19 +66,19 @@ class __Authenticator:
         elif self._automatic_fallback:
             account_api = self.get_account_api()
             token = account_api.get_deployment_access_token(deployment_id=deployment_id)['token']
-            self.authenticate_deployment(deployment_id=deployment_id, token=token)
+            self.authenticate_deployment(token=token)
         else:
-            raise RuntimeError('First authenticate using `authenticator.authenticate_deployment(deployment_id, token)`')
+            raise RuntimeError('First authenticate using `authenticator.authenticate_deployment(token)`')
 
-    def get_user_api(self, user_id, deployment_id=None):
+    def get_user_api(self, user_id, deployment_id) -> UserAPI:
         if (deployment_id, user_id) in self._user_api:
             return self._user_api[(deployment_id, user_id)]
         elif self._automatic_fallback and deployment_id is not None:
             deployment_api = self.get_deployment_api(deployment_id=deployment_id)
             token = deployment_api.get_user_access_token(user_id=user_id)['token']
-            return self.authenticate_user(deployment_id=deployment_id, user_id=user_id, token=token)
+            return self.authenticate_user(token=token)
         else:
-            raise RuntimeError('First authenticate using `authenticator.authenticate_user(deployment_id, user_id, token)`')
+            raise RuntimeError('First authenticate using `authenticator.authenticate_user(token)`')
 
     def enable_auto_fallback(self):
         self._automatic_fallback = True
@@ -273,17 +289,12 @@ class Deployment:
         json = account_api.get_deployment(deployment_id=deployment_id)
         return Deployment.from_dict(json)
 
-    def authenticate(self):
-        account_api: AccountAPI = authenticator.get_account_api()
-        token = account_api.get_deployment_access_token(deployment_id=self._id)['token']
-        authenticator.authenticate_deployment(deployment_id=self._id, token=token)
-
     @staticmethod
     def get(deployment_id):
-        try:
+        if authenticator.is_account_authenticated():
             account_api = authenticator.get_account_api()
             json = account_api.get_deployment(deployment_id=deployment_id)
-        except RuntimeError:
+        else:
             deployment_api = authenticator.get_deployment_api(deployment_id=deployment_id)
             json = deployment_api.info()
         return Deployment.from_dict(json)
@@ -351,6 +362,10 @@ class Deployment:
                 return [User.from_dict(r) for r in deployment_api.list_users()]
             else:
                 return User.from_dict(deployment_api.get_user(user_id=user_id))
+
+    def get_user_access_token(self, user_id):
+        deployment_api = authenticator.get_deployment_api(deployment_id=self._id)
+        return deployment_api.get_user_access_token(user_id=user_id)
 
     @staticmethod
     def from_dict(json):
@@ -449,3 +464,15 @@ class User:
         user_called = True if len(trace) >= 2 and ' del ' in trace[-2] else False
         if user_called and self._id is not None:
             self.delete()
+
+    @staticmethod
+    def get(user_id, deployment_id):
+        if authenticator.is_deployment_authenticated(deployment_id=deployment_id):
+            deployment_api = authenticator.get_deployment_api(deployment_id=deployment_id)
+            json = deployment_api.get_user(user_id=user_id)
+        else:
+            user_api = authenticator.get_user_api(user_id=user_id, deployment_id=deployment_id)
+            json = user_api.info()
+
+        return User.from_dict(json)
+
