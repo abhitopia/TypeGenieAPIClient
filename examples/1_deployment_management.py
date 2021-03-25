@@ -1,7 +1,7 @@
 from typegenie import authenticator, Deployment
 
 ACCOUNT_USERNAME = 'admin'
-ACCOUNT_PASSWORD = 'KCw8o7swbj'
+ACCOUNT_PASSWORD = 'password'
 
 # Authenticate with account credentials
 authenticator.authenticate_account(username=ACCOUNT_USERNAME, password=ACCOUNT_PASSWORD)
