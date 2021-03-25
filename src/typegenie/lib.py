@@ -476,3 +476,14 @@ class User:
 
         return User.from_dict(json)
 
+    def create_session(self):
+        user_api = authenticator.get_user_api(user_id=self._id, deployment_id=self.deployment_id)
+        return user_api.create_session()
+
+    def get_completions(self, session_id, events: List[Event], query: str):
+        user_api = authenticator.get_user_api(user_id=self._id, deployment_id=self.deployment_id)
+
+        return user_api.get_completions(session_id=session_id,
+                                        events=[e.to_dict() for e in events],
+                                        query=query)
+
