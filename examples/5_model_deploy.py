@@ -5,7 +5,7 @@ from datetime import datetime
 deployment_id = 'my-new-deployment'
 
 # Authentication
-DEPLOYMENT_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBsb3ltZW50X2lkIjoibXktbmV3LWRlcGxveW1lbnQiLCJhY2NvdW50X2lkIjoiS1VORE9TRSIsImV4cCI6MTYxNjcwNjc3Mywic2VxX251bSI6MSwiaWF0IjoxNjE2NzAzMTczfQ.Y9rYRb0c_1OUWU1K3KK0kiosyhXuIXTwIKECRvozX3I'
+DEPLOYMENT_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBsb3ltZW50X2lkIjoibXktbmV3LWRlcGxveW1lbnQiLCJhY2NvdW50X2lkIjoiS1VORE9TRSIsImV4cCI6MTYxNjcxMTI2Miwic2VxX251bSI6MSwiaWF0IjoxNjE2NzA3NjYyfQ.pyZabJxQu4FIsisSlmfCRfMoQrJICx3ilQBcQQsnmhc'
 
 ACCOUNT_USERNAME = None
 ACCOUNT_PASSWORD = None
@@ -43,3 +43,6 @@ print('Deployment History(After deployment):', deployment.history())
 # Undeploy
 deployment.undeploy()
 print('Deployment History(After un-deployment):', deployment.history())
+
+# Deploy again
+deployment.deploy(config=model_config, datasets=datasets)

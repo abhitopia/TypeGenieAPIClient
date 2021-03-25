@@ -1,5 +1,6 @@
 import time
 from datetime import datetime, timezone
+from typing import List
 
 import pandas as pd
 from threading import Thread
@@ -243,7 +244,7 @@ class UserAPI(API):
     def create_session(self):
         return self._post(self.SESSION_SUFFIX, json={})
 
-    def get_completions(self, session_id, events, query: str):
+    def get_completions(self, session_id, events: List[dict], query: str):
         assert isinstance(session_id, str)
         payload = {'query': query, 'events': events}
         return self._post(f'{self.SESSION_SUFFIX}/{session_id}/completions', json=payload)
