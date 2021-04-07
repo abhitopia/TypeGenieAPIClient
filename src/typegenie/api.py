@@ -28,7 +28,7 @@ class AutoRenewThread(Thread):
 
     def run(self):
         while self._running:
-            result = self.api.renew(inplace=True)
+            result = self.api.renew_token(inplace=True)
             expires_at = pd.to_datetime(result['expires_at']).to_pydatetime().replace(tzinfo=timezone.utc)
             seconds_till_expiry = (expires_at - datetime.utcnow().replace(tzinfo=timezone.utc)).seconds
             renew_after = max(0, seconds_till_expiry - 100)
