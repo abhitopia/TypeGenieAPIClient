@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import List, Union
 
-from src.typegenie.api import AccountAPI, DeploymentAPI, UserAPI
+from .api import AccountAPI, DeploymentAPI, UserAPI
 import pandas as pd
 import traceback
 
