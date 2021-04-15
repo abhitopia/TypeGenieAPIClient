@@ -10,7 +10,7 @@ setup(
     url="https://github.com/abhitopia/TypeGenieApiClient",
     author="abhitopia",
     author_email="hi@typegenie.net",
-    description='Client Library for TypeGenie API. Check out http://api.typegenie.net for more info.',
+    description='Client Library for TypeGenie API. Check out https://api.typegenie.net for more info.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages('src', include=['typegenie', 'typegenie.*']),
