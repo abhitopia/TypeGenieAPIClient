@@ -8,7 +8,7 @@ from threading import Thread
 import requests
 from requests.auth import HTTPBasicAuth
 
-BASE_URL = 'http://api.typegenie.net/api/v1'
+BASE_URL = 'https://api.typegenie.net/api/v1'
 
 
 class BearerAuth(requests.auth.AuthBase):
