@@ -3,7 +3,6 @@ from enum import Enum
 from typing import List, Union
 
 from .api import AccountAPI, DeploymentAPI, UserAPI
-import pandas as pd
 import traceback
 
 
@@ -135,8 +134,8 @@ class Event:
         self._author = author.name
         self._event = event.name
         self._value = value
-        self._timestamp = timestamp if isinstance(timestamp, datetime) else pd.to_datetime(
-            timestamp).to_pydatetime().replace(tzinfo=timezone.utc)
+        self._timestamp = timestamp if isinstance(timestamp, datetime) else datetime.strptime(
+            timestamp, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
 
     def to_dict(self):
         json = {
@@ -179,7 +178,8 @@ class DeploymentEvent:
         event = DeploymentEvent()
         event._dataset_ids = json['dataset_ids']
         event._configuration_id = json['configuration_id']
-        event._timestamp = pd.to_datetime(json['timestamp']).to_pydatetime().replace(tzinfo=timezone.utc)
+        event._timestamp = datetime.strptime(
+            json['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         event._event = json['event']
         return event
 
@@ -238,7 +238,8 @@ class Dataset:
         dataset._metadata = metadata
         dataset._deployment_id = json['deployment_id']
         dataset._num_dialogues = json['num_dialogues']
-        dataset._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
+        dataset._created_at = datetime.strptime(
+            json['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         return dataset
 
     def delete(self):
@@ -374,7 +375,8 @@ class Deployment:
         deployment = Deployment()
         deployment._id = json['id']
         deployment._metadata = metadata
-        deployment._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
+        deployment._created_at = datetime.strptime(
+            json['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         return deployment
 
     @staticmethod
@@ -450,7 +452,8 @@ class User:
         user._id = json['id']
         user._metadata = metadata
         user._deployment_id = json['deployment_id']
-        user._created_at = pd.to_datetime(json['created_at']).to_pydatetime().replace(tzinfo=timezone.utc)
+        user._created_at = datetime.strptime(
+            json['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
         return user
 
     def delete(self):
