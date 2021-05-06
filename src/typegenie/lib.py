@@ -14,6 +14,10 @@ class __Authenticator:
         self._user_api = {}
         self._automatic_fallback = False
         self._automatic_renew = False
+        self._sandbox = False
+
+    def enable_sandbox(self):
+        self._sandbox = True
 
     def is_account_authenticated(self):
         return self._account_api is not None
@@ -25,10 +29,10 @@ class __Authenticator:
         return (user_id, deployment_id) in self._user_api
 
     def authenticate_account(self, username, password):
-        self._account_api = AccountAPI(username=username, password=password)
+        self._account_api = AccountAPI(username=username, password=password, sandbox=self._sandbox)
 
     def authenticate_deployment(self, token):
-        deployment_api = DeploymentAPI(token=token)
+        deployment_api = DeploymentAPI(token=token, sandbox=self._sandbox)
         deployment_id = deployment_api.info()['id']
         self._deployment_api[deployment_id] = deployment_api
 
@@ -36,7 +40,7 @@ class __Authenticator:
             self._deployment_api[deployment_id].enable_auto_renew()
 
     def authenticate_user(self, token):
-        user_api = UserAPI(token=token)
+        user_api = UserAPI(token=token, sandbox=self._sandbox)
         user_info = user_api.info()
         user_id = user_info['id']
         deployment_id = user_info['deployment_id']
@@ -67,6 +71,7 @@ class __Authenticator:
             account_api = self.get_account_api()
             token = account_api.get_deployment_access_token(deployment_id=deployment_id)['token']
             self.authenticate_deployment(token=token)
+            return self._deployment_api[deployment_id]
         else:
             raise RuntimeError('First authenticate using `authenticator.authenticate_deployment(token)`')
 
@@ -76,7 +81,8 @@ class __Authenticator:
         elif self._automatic_fallback and deployment_id is not None:
             deployment_api = self.get_deployment_api(deployment_id=deployment_id)
             token = deployment_api.get_user_access_token(user_id=user_id)['token']
-            return self.authenticate_user(token=token)
+            self.authenticate_user(token=token)
+            return self._user_api[(deployment_id, user_id)]
         else:
             raise RuntimeError('First authenticate using `authenticator.authenticate_user(token)`')
 
