@@ -8,6 +8,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 BASE_URL = 'https://api.typegenie.net/api/v1'
+SANDBOX_URL = 'https://staging-api.typegenie.net/api/v1'
 
 
 class BearerAuth(requests.auth.AuthBase):
@@ -45,15 +46,19 @@ class AutoRenewThread(Thread):
 class API:
     COMMON_PREFIX = ''
 
-    def __init__(self):
+    def __init__(self, sandbox=False):
         self._session = requests.Session()
         self._session.headers.update({
             'Content-type': 'application/json',
             'Accept': 'application/json'
         })
+        self._sandbox = sandbox
 
     def _get_url(self, end_point):
-        return f'{BASE_URL}{self.COMMON_PREFIX}{end_point}'
+        if self._sandbox:
+            return f'{SANDBOX_URL}{self.COMMON_PREFIX}{end_point}'
+        else:
+            return f'{BASE_URL}{self.COMMON_PREFIX}{end_point}'
 
     def _request(self, func, url, **kwargs):
         try:
@@ -88,8 +93,8 @@ class AccountAPI(API):
     COMMON_PREFIX = '/account'
     DEPLOYMENT_SUFFIX = '/deployment'
 
-    def __init__(self, username, password):
-        super().__init__()
+    def __init__(self, username, password, sandbox=False):
+        super().__init__(sandbox=sandbox)
         self._session.auth = HTTPBasicAuth(username=username, password=password)
 
     def list_deployments(self):
@@ -120,12 +125,12 @@ class AccountAPI(API):
 
 class DeploymentAPI(API):
     COMMON_PREFIX = '/deployment'
-    USER_SUFFIX = '/user'  # TODO(abhi) change this to `/user`
+    USER_SUFFIX = '/user'
     MODEL_SUFFIX = '/model'
     DATASET_SUFFIX = '/dataset'
 
-    def __init__(self, token):
-        super().__init__()
+    def __init__(self, token, sandbox=False):
+        super().__init__(sandbox=sandbox)
         self._session.auth = BearerAuth(token=token)
         self._auto_renew = AutoRenewThread(api=self)
 
@@ -220,8 +225,8 @@ class UserAPI(API):
     COMMON_PREFIX = '/user'
     SESSION_SUFFIX = '/session'
 
-    def __init__(self, token):
-        super().__init__()
+    def __init__(self, token, sandbox=False):
+        super().__init__(sandbox=sandbox)
         self._session.auth = BearerAuth(token=token)
         self._auto_renew = AutoRenewThread(api=self)
 

@@ -10,6 +10,9 @@ DEPLOYMENT_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBsb3ltZW50
 ACCOUNT_USERNAME = None
 ACCOUNT_PASSWORD = None
 
+# Enabling sandbox environment. Ignore this!
+authenticator.enable_sandbox()
+
 if DEPLOYMENT_ACCESS_TOKEN is not None:
     authenticator.authenticate_deployment(token=DEPLOYMENT_ACCESS_TOKEN)
 elif ACCOUNT_USERNAME is not None and ACCOUNT_PASSWORD is not None:
