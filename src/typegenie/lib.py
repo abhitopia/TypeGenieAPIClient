@@ -153,6 +153,18 @@ class Event:
         }
         return json
 
+    @staticmethod
+    def from_dict(json):
+        event = Event(
+            author_id=json['author_id'],
+            author=Author(json['author']),
+            event=EventType(json['event']),
+            value=json['value'],
+            timestamp=json['timestamp']
+        )
+
+        return event
+
 
 class Dialogue:
     def __init__(self, dialogue_id, metadata={}):
@@ -167,6 +179,13 @@ class Dialogue:
             'events': [e.to_dict() for e in self.events]
         }
         return json
+
+    @staticmethod
+    def from_dict(json):
+        dialogue = Dialogue(dialogue_id=json['id'], metadata=json['metadata'])
+        for event in json['events']:
+            dialogue.events.append(Event.from_dict(event))
+        return dialogue
 
 
 class DeploymentEvent:
