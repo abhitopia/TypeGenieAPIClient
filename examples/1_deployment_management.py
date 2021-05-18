@@ -1,7 +1,13 @@
 from typegenie import authenticator, Deployment
+from examples.creds import USERNAME, PASSWORD
 
-ACCOUNT_USERNAME = 'admin'
-ACCOUNT_PASSWORD = 'password'
+
+ACCOUNT_USERNAME = USERNAME
+ACCOUNT_PASSWORD = PASSWORD
+
+# Enabling sandbox environment. Ignore this!
+authenticator.enable_sandbox()
+
 
 # Authenticate with account credentials
 authenticator.authenticate_account(username=ACCOUNT_USERNAME, password=ACCOUNT_PASSWORD)
