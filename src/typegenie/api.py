@@ -1,6 +1,7 @@
 import time
 from datetime import datetime, timezone
 from typing import List
+from json import JSONDecodeError
 
 from threading import Thread
 
@@ -63,14 +64,16 @@ class API:
     def _request(self, func, url, **kwargs):
         try:
             resp = func(url, **kwargs)
+            resp.raise_for_status()
             r = resp.json()
-            if r['error'] is not None:
-                resp.raise_for_status()
-            else:
-                return r['result']
+            return r['result']
         except requests.exceptions.HTTPError as err:
-            err.args = list(err.args) + [f'Reason: {r["error"]}']
-            raise
+            try:
+                r = resp.json()
+                err.args = list(err.args) + [f'Reason: {r["error"]}']
+                raise err
+            except JSONDecodeError:
+                raise err
 
     def _get(self, endpoint):
         url = self._get_url(endpoint)
