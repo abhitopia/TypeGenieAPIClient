@@ -22,6 +22,10 @@ setup(
         "Programming Language :: Python :: 3"
     ],
     install_requires=[
-        "requests"
+        "requests>=2.25.1",
+        "click>= 8.0.1",
+        "python-box>=5.3.0",
+        "prompt_toolkit>=3.0.18",
+        "colorama>=0.4.4"
     ]
 )

@@ -143,6 +143,18 @@ class Event:
         self._timestamp = timestamp if isinstance(timestamp, datetime) else datetime.strptime(
             timestamp, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
 
+    @property
+    def author(self):
+        return self._author
+
+    @property
+    def event(self):
+        return self._event
+
+    @property
+    def value(self):
+        return self._value
+
     def to_dict(self):
         json = {
             'author_id': self._author_id,
