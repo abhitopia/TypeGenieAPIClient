@@ -4,6 +4,7 @@ from typing import List
 import colorama
 from colorama import Back as B, Fore as F, Style
 import numpy as np
+from random import randint, choice
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
@@ -48,13 +49,12 @@ class TypeGenieCompleter(Completer):
 
 
 class AutoComplete:
-    def __init__(self, user, dialogue_dataset, sampling_dist, interactive=True, unprompted=False):
+    def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False):
         self.user = user
         self.context = []
         self.dialogue_dataset = dialogue_dataset
         self.unprompted = unprompted
         self.interactive = interactive
-        self.sampling_dist = sampling_dist
         self.session = PromptSession(complete_in_thread=True,
                                      complete_while_typing=True,
                                      completer=TypeGenieCompleter(user=self.user))
@@ -62,21 +62,14 @@ class AutoComplete:
 
     def sample_context_and_response(self):
         while True:
-            did = np.random.randint(len(self.dialogue_dataset))
+            did = randint(0, len(self.dialogue_dataset)-1)
             dialogue_events: List[Event] = self.dialogue_dataset[did].events
 
             agent_uids = [idx for idx, u in enumerate(dialogue_events) if u.author == 'AGENT' and u.event == 'MESSAGE']
             if len(agent_uids) > 0:
                 break
 
-        if self.sampling_dist == 'uniform':
-            split_idx = int(np.random.choice(agent_uids))
-        else:
-            agent_idx = -1
-            while agent_idx < 0 or agent_idx >= len(agent_uids):
-                agent_idx = int(np.round(np.random.normal(len(agent_uids) / 2, len(agent_uids) / 4)))
-            split_idx = agent_uids[agent_idx]
-
+        split_idx = int(choice(agent_uids))
         return dialogue_events[:split_idx], dialogue_events[split_idx:]
 
     def interact(self):

@@ -18,8 +18,6 @@ from typegenie import authenticator, Deployment, Dialogue, AutoComplete
 @click.option('--cache-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), default='/tmp',
               help="Path where dataset is downloaded")
 @click.option('-n', '--num-dialogues', default=500, type=int, help="Number of dialogues to load")
-@click.option('-s', '--sampling-dist', help='Sampling function used', default='uniform', required=False,
-              type=click.Choice(['uniform', 'normal']), show_default=True)
 @click.option('--interactive', is_flag=True, default=False, help="Set to continue interaction")
 @click.option('--unprompted', is_flag=True, default=False, help="Show completions even when unprompted")
 def test(**params):
@@ -70,7 +68,6 @@ def test(**params):
 
     autocomplete = AutoComplete(user=user,
                                 dialogue_dataset=dialogues,
-                                sampling_dist=params.sampling_dist,
                                 unprompted=params.unprompted,
                                 interactive=params.interactive)
 
