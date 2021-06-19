@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-
+import requests
 import click
 from box import Box
 from typegenie import authenticator, Deployment, Dialogue, AutoComplete
@@ -20,6 +20,7 @@ from typegenie import authenticator, Deployment, Dialogue, AutoComplete
 @click.option('-n', '--num-dialogues', default=500, type=int, help="Number of dialogues to load")
 @click.option('--interactive', is_flag=True, default=False, help="Set to continue interaction")
 @click.option('--unprompted', is_flag=True, default=False, help="Show completions even when unprompted")
+@click.option('--multiline', is_flag=True, default=False, help="Set to allow multiline completions")
 def test(**params):
     params = Box(params)
 
@@ -52,13 +53,18 @@ def test(**params):
     download_dir = Path(params.cache_dir) / dataset.id
 
     download_dir.mkdir(exist_ok=True, parents=True)
-    # TODO(abhi) when download bug is fixed
-    # download_links = dataset.get_download_links()
+    download_links = dataset.get_download_links()
 
-    data_files = sorted(list(download_dir.glob('*.json')))
     dialogues = []
-    for file in data_files:
-        data = json.load(file.open('r'))
+    for link in sorted(download_links, key=lambda x: x['url']):
+        file_name = link['url'].split('?')[0].split('/')[-1]
+        output_file = download_dir / file_name
+        if not output_file.exists():
+            data = requests.get(link['url']).json()
+            json.dump(data, output_file.open('w'), indent=4)
+        else:
+            data = json.load(output_file.open('r'))
+
         for d in data:
             if len(dialogues) < params.num_dialogues:
                 dialogues.append(Dialogue.from_dict(d))
@@ -69,6 +75,7 @@ def test(**params):
     autocomplete = AutoComplete(user=user,
                                 dialogue_dataset=dialogues,
                                 unprompted=params.unprompted,
+                                multiline=params.multiline,
                                 interactive=params.interactive)
 
     autocomplete.interact()
