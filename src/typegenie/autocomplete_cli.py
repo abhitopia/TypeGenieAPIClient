@@ -3,7 +3,6 @@ from typing import List
 
 import colorama
 from colorama import Back as B, Fore as F, Style
-import numpy as np
 from random import randint, choice
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
@@ -49,11 +48,12 @@ class TypeGenieCompleter(Completer):
 
 
 class AutoComplete:
-    def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False):
+    def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False, multiline=False):
         self.user = user
         self.context = []
         self.dialogue_dataset = dialogue_dataset
         self.unprompted = unprompted
+        self.multiline = multiline
         self.interactive = interactive
         self.session = PromptSession(complete_in_thread=True,
                                      complete_while_typing=True,
@@ -120,6 +120,7 @@ class AutoComplete:
 
     def get_prediction(self):
         self.session.completer.context = self.context
-        text = self.session.prompt('Agent (with TypeGenie): ', pre_run=pre_run if self.unprompted else None)
+        text = self.session.prompt('Agent (with TypeGenie): ', pre_run=pre_run if self.unprompted else None,
+                                   multiline=self.multiline)
         return text
 
