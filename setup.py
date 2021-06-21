@@ -1,12 +1,14 @@
 from setuptools import setup, find_packages
+from pathlib import Path
 
-
-with open("README.md", "r") as fh:
+with (Path(__file__).parent / "README.md").open("r") as fh:
     long_description = fh.read()
+
+src_dir = str(Path(__file__).parent)
 
 setup(
     name='typegenie',
-    version='0.1.0',
+    version='0.1.5',
     url="https://github.com/abhitopia/TypeGenieApiClient",
     author="abhitopia",
     author_email="hi@typegenie.net",
@@ -16,6 +18,7 @@ setup(
     packages=find_packages('src', include=['typegenie', 'typegenie.*']),
     # py_modules=[''],
     package_dir={'': 'src'},
+    entry_points={'console_scripts': ['typegenie-cli=typegenie.__cli__:main']},
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -26,6 +29,12 @@ setup(
         "click>= 8.0.1",
         "python-box>=5.3.0",
         "prompt_toolkit>=3.0.18",
-        "colorama>=0.4.4"
-    ]
+        "colorama>=0.4.4"],
+    # These are only required if you want to use the typegenie-cli, i.e. pip install typegenie[with-cli]
+    # extras_require={
+    #     'with-cli': ["click>= 8.0.1",
+    #                  "python-box>=5.3.0",
+    #                  "prompt_toolkit>=3.0.18",
+    #                  "colorama>=0.4.4"],
+    # }
 )
