@@ -12,6 +12,7 @@ phases:
       - chmod +x kubectl
       - mv ./kubectl /usr/local/bin/kubectl
       - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
   pre_build:
     commands:
       - AWS_ACCOUNT_ID=705303224111
@@ -25,6 +26,7 @@ phases:
       - REPOSITORY_URI=$ECR_URI/$IMAGE_REPO_NAME
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+
   build:
     commands:
       - echo Build started on `date`
@@ -39,8 +41,10 @@ phases:
       - echo Will start running tests...
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests successfully passed, will deploy to pip
+      - TWINE_USERNAME=$(python3 get_secret_username.py)
+      - TWINE_SECRET=$(python3 get_secret_password.py)
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-      - docker run -it $REPOSITORY_URI:$IMAGE_TAG twine upload dist/*
+      - docker run -it $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
 
 # The below needs to be completed by Omkar
