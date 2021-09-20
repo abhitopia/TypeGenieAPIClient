@@ -1,12 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    TEST_VAR: "test_var"
-  secrets-manager:
-    TWINE_USERNAME: "PyPi/testAccount"
-    TWINE_PASSWORD: "PyPi/testAccount:password"
-
 phases:
   install:
     commands:  # Install AWS cli, kubectl (needed for Helm) and Helm
