@@ -36,8 +36,6 @@ phases:
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests successfully passed, will bump version
       - echo bump version
-      - echo Should I push to repository right now?????
-      - echo $(git status)
 
 
 # The below needs to be completed by Omkar
