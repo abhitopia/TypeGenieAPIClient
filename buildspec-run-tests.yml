@@ -35,5 +35,4 @@ phases:
       - echo Will start running tests...
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests finished successfully
-      - echo $(git status)
 

@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  secrets-manager:
+    TWINE_USERNAME: "arn:aws:secretsmanager:eu-west-1:705303224111:secret:PyPi/testAccount-yJfBlO:username"
+    TWINE_SECRET: "arn:aws:secretsmanager:eu-west-1:705303224111:secret:PyPi/testAccount-yJfBlO:password"
+
 phases:
   install:
     commands:  # Install AWS cli, kubectl (needed for Helm) and Helm
@@ -41,11 +46,12 @@ phases:
       - echo Will start running tests...
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests successfully passed, will deploy to pip
-      - TWINE_USERNAME=$(python3 get_secret_username.py)
-      - TWINE_SECRET=$(python3 get_secret_password.py)
+      - echo Twine username is $TWINE_USERNAME
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
       - docker run -it $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
 
 # The below needs to be completed by Omkar
 #      - "helm upgrade -i <RELEASE_NAME> <PATH_TO_HELM_FILES> -f ./path/to/kubernetes/values/values.$ENV.yaml --set image.tag=$CODEBUILD_RESOLVED_SOURCE_VERSION"
+#    - TWINE_USERNAME=$(python3 get_secret_username.py)
+#      - TWINE_SECRET=$(python3 get_secret_password.py)
