@@ -38,7 +38,7 @@ phases:
       - echo Will now tag image
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - echo Image tagged successfully
-      - echo $TWINE_USERNAME
+      - echo Twine username is -> $TWINE_USERNAME
   post_build:
     commands:
       - echo Will start running tests...
