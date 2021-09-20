@@ -18,6 +18,7 @@ phases:
       - chmod +x kubectl
       - mv ./kubectl /usr/local/bin/kubectl
       - curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
   pre_build:
     commands:
       - AWS_ACCOUNT_ID=705303224111
