@@ -2,9 +2,8 @@ version: 0.2
 
 env:
   secrets-manager:
-    TWINE_USERNAME: "arn:aws:secretsmanager:eu-west-1:705303224111:secret:PyPi/testAccount-yJfBlO:username"
-    TWINE_SECRET: "arn:aws:secretsmanager:eu-west-1:705303224111:secret:PyPi/testAccount-yJfBlO:password"
-
+    TWINE_USERNAME: "PyPi/testAccount:username"
+    TWINE_PASSWORD: "PyPi/testAccount:password"
 
 phases:
   install:
