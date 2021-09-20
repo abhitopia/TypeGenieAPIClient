@@ -43,6 +43,6 @@ phases:
   post_build:
     commands:
       - echo Will start running tests...
-      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
+      - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests finished successfully
 
