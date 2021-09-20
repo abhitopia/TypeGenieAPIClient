@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   secrets-manager:
-    TWINE_USERNAME: "PyPi/testAccount:username"
+    TWINE_USERNAME: "PyPi/testAccount"
     TWINE_PASSWORD: "PyPi/testAccount:password"
 
 phases:
