@@ -35,14 +35,14 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Tests.Dockerfile .
+      - docker build -t $REPOSITORY_URI:latest -f Tests.Dockerfile .
       - echo Will now tag image
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:$COMMIT_HASH
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - echo Image tagged successfully
       - echo $TWINE_USERNAME
   post_build:
     commands:
       - echo Will start running tests...
-      - docker run -it $REPOSITORY_URI:$COMMIT_HASH python tests.py
+      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests finished successfully
 
