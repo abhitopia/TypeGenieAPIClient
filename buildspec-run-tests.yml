@@ -1,6 +1,8 @@
 version: 0.2
 
 env:
+  variable:
+    TEST_VAR: "test_var"
   secrets-manager:
     TWINE_USERNAME: "PyPi/testAccount"
     TWINE_PASSWORD: "PyPi/testAccount:password"
@@ -39,9 +41,12 @@ phases:
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - echo Image tagged successfully
       - echo Twine username is $TWINE_USERNAME
+      - echo Test var $TEST_VAR
   post_build:
     commands:
       - echo Will start running tests...
       - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
       - echo Tests finished successfully
+      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
+      - docker run -it $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
