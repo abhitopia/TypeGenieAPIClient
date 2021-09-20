@@ -22,7 +22,7 @@ phases:
   pre_build:
     commands:
       - AWS_ACCOUNT_ID=705303224111
-      - AWS_DEFAULT_REGION=eu-west-1
+      - AWS_DEFAULT_REGION=eu-west-2
       - IMAGE_REPO_NAME=typegenie-api-client
       - aws --version
       - ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
