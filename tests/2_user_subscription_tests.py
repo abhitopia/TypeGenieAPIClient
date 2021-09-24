@@ -2,7 +2,7 @@ from typegenie import authenticator
 from requests import HTTPError
 import json
 import os
-from testconfig import authenticated_deployment, clean_test_environment, user_id, authenticator
+from testconfig import authenticated_deployment, clean_test_environment, user_id, authenticator, deployment_id
 
 
 def test_list_users(authenticated_deployment):
@@ -52,3 +52,19 @@ def test_user_token_fetch(authenticated_deployment):
     authenticated_deployment.users(user_id=user_id, create=True, metadata={})
     user_token = authenticated_deployment.get_user_access_token(user_id=user_id)
     assert ("token" in user_token and isinstance(user_token["token"], str))
+
+
+def test_create_user_session(authenticated_deployment):
+    user = authenticated_deployment.users(user_id=user_id, create=True, metadata={})
+    user_token = authenticated_deployment.get_user_access_token(user_id=user_id)
+    authenticator.authenticate_user(token=user_token["token"])
+    session_id = user.create_session()
+    assert (isinstance(session_id, str) and session_id is not None)
+
+
+def test_exception_on_non_authenticated_user_session_request(authenticated_deployment):
+    try:
+        user = authenticated_deployment.users(user_id=user_id, create=True, metadata={})
+        user.create_session()
+    except HTTPError as e:
+        assert (e.response.status_code == 403)
