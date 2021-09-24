@@ -68,10 +68,10 @@ class TypeGenieCompleter(Completer):
             percentile50 = np.percentile(np.array(self.records), 50)
             percentile75 = np.percentile(np.array(self.records), 75)
             percentile100 = np.percentile(np.array(self.records), 100)
-            return {"avg": avg, "p25": percentile25, "p50": percentile50, "p75": percentile75, "p100": percentile100}
-        else:
-            return None
-
+            printc(
+                "\nAverage: {}\nPercentile 25%: {}\nPercentile 50%: {}\nPercentile 75%: {}\nPercentile 100%: {} ".format(
+                    avg, percentile25, percentile50, percentile75, percentile100))
+            return
 
 class AutoComplete:
     def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False, multiline=False, profiling=False):
@@ -136,11 +136,7 @@ class AutoComplete:
                     time.sleep(1)
                 except KeyboardInterrupt:
                     printc('\nExiting...', F.RED)
-                    stats = self.session.completer.compute_statistics()
-                    if stats is not None:
-                        printc(
-                            "\nAverage: {}\nPercentile 25%: {}\nPercentile 50%: {}\nPercentile 75%: {}\nPercentile 100%: {} ".format(
-                                stats["avg"], stats["p25"], stats["p50"], stats["p75"], stats["p100"]))
+                    self.session.completer.compute_statistics()
                     return
 
     def render_context(self, context: List[Event]):

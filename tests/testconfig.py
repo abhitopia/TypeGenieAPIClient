@@ -5,6 +5,16 @@ from datetime import datetime
 
 ACCOUNT_USERNAME = os.getenv('username')
 ACCOUNT_PASSWORD = os.getenv('password')
+ENV = os.getenv('ENV')
+
+if ENV is None:
+    raise Exception('Need environment to run tests')
+elif ENV != 'staging' and ENV != 'production':
+    raise Exception('Environment must be staging or production')
+
+if ENV == 'staging':
+    authenticator.enable_sandbox()
+
 authenticator.authenticate_account(username=ACCOUNT_USERNAME, password=ACCOUNT_PASSWORD)
 deployment_id = 'test-deployment'
 metadata = {'test': True}

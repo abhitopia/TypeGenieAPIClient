@@ -55,24 +55,30 @@ def main(**params):
     download_dir = Path(params.cache_dir) / dataset.id
 
     download_dir.mkdir(exist_ok=True, parents=True)
-    download_links = dataset.get_download_links()
+    # download_links = dataset.get_download_links()
+    print('Running hacky code')
 
     dialogues = []
-    for link in sorted(download_links, key=lambda x: x['url']):
-        file_name = link['url'].split('?')[0].split('/')[-1]
-        output_file = download_dir / file_name
-        if not output_file.exists():
-            data = requests.get(link['url']).json()
-            json.dump(data, output_file.open('w'), indent=4)
-        else:
-            data = json.load(output_file.open('r'))
-
+    for file in download_dir.glob('*.json'):
+        data = json.load(file.open('r'))
         for d in data:
-            if len(dialogues) < params.num_dialogues:
-                dialogues.append(Dialogue.from_dict(d))
-        else:
-            if len(dialogues) >= params.num_dialogues:
-                break
+            dialogues.append(Dialogue.from_dict(d))
+    # dialogues = []
+    # for link in sorted(download_links, key=lambda x: x['url']):
+    #     file_name = link['url'].split('?')[0].split('/')[-1]
+    #     output_file = download_dir / file_name
+    #     if not output_file.exists():
+    #         data = requests.get(link['url']).json()
+    #         json.dump(data, output_file.open('w'), indent=4)
+    #     else:
+    #         data = json.load(output_file.open('r'))
+    #
+    #     for d in data:
+    #         if len(dialogues) < params.num_dialogues:
+    #             dialogues.append(Dialogue.from_dict(d))
+    #     else:
+    #         if len(dialogues) >= params.num_dialogues:
+    #             break
 
     autocomplete = AutoComplete(user=user,
                                 dialogue_dataset=dialogues,
