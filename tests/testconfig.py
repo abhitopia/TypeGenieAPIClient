@@ -1,11 +1,15 @@
-from typegenie import authenticator, Deployment, Dialogue, Event, EventType, Author
-
-from deployment_management_tests import test_create_deployment, test_deployment_safe_delete, \
-    test_deployment_token_fetch, test_list_deployments
-from user_subscription_tests import test_authenticate_deployment
-from dataset_management_tests import test_create_dataset
+import os
+import pytest
+from typegenie import authenticator, Deployment, Event, EventType, Author, Dialogue
 from datetime import datetime
 
+ACCOUNT_USERNAME = os.getenv('username')
+ACCOUNT_PASSWORD = os.getenv('password')
+authenticator.authenticate_account(username=ACCOUNT_USERNAME, password=ACCOUNT_PASSWORD)
+deployment_id = 'test-deployment'
+metadata = {'test': True}
+user_id = 'test_user'
+dataset_id = 'dataset-id'
 
 my_dialogue_1 = Dialogue(dialogue_id='my-dialogue-1', metadata={'title': "What is love?"})
 
@@ -52,28 +56,29 @@ my_dialogue_2.events.append(Event(author_id='pink-floyd-fan',
                                   author=Author.AGENT))
 
 
-def test_upload_to_dataset(dataset, dialogues=[my_dialogue_1, my_dialogue_2] * 100):
-    dataset.upload(dialogues)
-
-def test_get_download_link(dataset):
-    download_links = dataset.get_download_links()
-    print(download_links)
+dialogues = [my_dialogue_1, my_dialogue_2]
 
 
-if __name__ == "__main__":
-    try:
-        # Create and authenticate deployment
-        deployment = test_create_deployment('test-deployment')
-        token = test_deployment_token_fetch(deployment.id)
-        test_authenticate_deployment(token["token"])
-        # Create dataset
-        dataset = test_create_dataset(deployment, 'test-dataset')
-        test_upload_to_dataset(dataset)
-        test_get_download_link(dataset)
-        #Delete deployment
-        deployments = test_list_deployments()
-        test_deployment_safe_delete(deployments, deployment.id)
-        test_list_deployments()
-    except Exception:
-        deployments = test_list_deployments()
-        test_deployment_safe_delete(deployments, 'test-deployment')
+@pytest.fixture
+def deployment():
+    yield Deployment.create(deployment_id=deployment_id, metadata=metadata)
+
+
+@pytest.fixture(autouse=True)
+def clean_test_environment():
+    deployments = Deployment.list()
+    if len(deployments) > 0:
+        for idx in range(len(deployments)):
+            deployment = deployments[idx]
+            deployment.delete()
+            del deployment
+            break
+
+@pytest.fixture
+def authenticated_deployment():
+    deployment = Deployment.create(deployment_id, {})
+    deployment_access_token = Deployment.get_access_token(deployment_id=deployment_id)
+    authenticator.authenticate_deployment(token=deployment_access_token["token"])
+    yield deployment
+
+

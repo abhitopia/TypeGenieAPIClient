@@ -1,27 +1,5 @@
 from typegenie import authenticator, Deployment, Dialogue, Event, EventType, Author
-
-from deployment_management_tests import test_create_deployment, test_deployment_safe_delete, \
-    test_deployment_token_fetch, test_list_deployments
-from user_subscription_tests import test_authenticate_deployment, test_create_user, test_delete_user, test_user_token_fetch
-from dataset_management_tests import test_create_dataset
-from upload_dialogues_tests import test_upload_to_dataset
-from datetime import datetime
-
-
-events = [Event(author_id='lost-soul-visitor',
-                value='What is love?',
-                event=EventType.MESSAGE,
-                timestamp=datetime.utcnow(),
-                author=Author.USER),
-          Event(author_id='my-new-user',  # Note this is an agent already added as user to deployment
-                value="Oh baby, don't hurt me",
-                event=EventType.MESSAGE,
-                timestamp=datetime.utcnow(),  # This should be time at which the event happened
-                author=Author.AGENT)
-          ]
-
-
-
+from testconfig import authenticated_deployment, dataset_id, user_id, deployment_id, dialogues
 
 
 def test_complete_model_deployment(deployment):
