@@ -28,15 +28,15 @@ def main(**params):
 
     KeyBindings:
 
-    - Use arrow up or down to select a completion \b
+    - Arrow <Up> or <DOWN> to select a completion
 
-    - Use <TAB> to accept selected completion \b
+    - <TAB> to accept selected completion
 
-    - Use <SHIFT + TAB> to only accept the first word \b
+    - <SHIFT+TAB> to only accept the first word
 
-    - Use <CTL + C> to start a new dialogue \b
+    - <CTL+C> to start a new dialogue
 
-    - Use <CTL + C> in succession to exit \b
+    - <CTL+C> in succession to exit
     """
     params = Box(params)
 
