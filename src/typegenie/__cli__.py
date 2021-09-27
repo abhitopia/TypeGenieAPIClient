@@ -30,9 +30,9 @@ def main(**params):
 
     - Arrow <Up> or <DOWN> to select a completion
 
-    - <TAB> to accept selected completion
+    - <TAB> to accept the selected completion
 
-    - <SHIFT+TAB> to only accept the first word
+    - <SHIFT+TAB> to only accept the first word of the selected completion
 
     - <CTL+C> to start a new dialogue
 
