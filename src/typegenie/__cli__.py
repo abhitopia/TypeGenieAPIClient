@@ -27,11 +27,16 @@ def main(**params):
     """Simulate TypeGenie on your command line!
 
     KeyBindings:
-    - Use arrow up or down to select a completion
-    - Use <TAB> to accept selected completion
-    - Use <SHIFT + TAB> to only accept the first word
-    - Use <CTL + C> to start a new dialogue
-    - Use <CTL + C> in succession to exit
+
+    - Use arrow up or down to select a completion \b
+
+    - Use <TAB> to accept selected completion \b
+
+    - Use <SHIFT + TAB> to only accept the first word \b
+
+    - Use <CTL + C> to start a new dialogue \b
+
+    - Use <CTL + C> in succession to exit \b
     """
     params = Box(params)
 
