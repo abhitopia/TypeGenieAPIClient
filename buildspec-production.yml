@@ -40,8 +40,9 @@ phases:
       - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
       # How to make sure this only runs if tests pass?
       - echo Tests successfully passed, will deploy to pip
-      - docker run $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-      - docker run $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --repository testpypi --username $TWINE_USERNAME --password $TWINE_PASSWORD
+      - rm -rf dist && mkdir -p dist
+      - docker run -v dist:dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
+      - docker run -v dist:dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --repository testpypi --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
 
 
