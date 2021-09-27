@@ -1,11 +1,5 @@
 version: 0.2
 
-env:
-  secrets-manager:
-    TWINE_USERNAME: "PyPi/testAccount:username"
-    TWINE_PASSWORD: "PyPi/testAccount:password"
-
-
 phases:
   install:
     commands:  # Install AWS cli, kubectl (needed for Helm) and Helm
@@ -31,17 +25,15 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest -f Production.Dockerfile .
+      - docker build -t $REPOSITORY_URI:latest -f Tests.Dockerfile .
+      - echo Will now tag image
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_HASH
-    post_build:
-      commands:
-        - echo Build completed on `date`
-        - echo Will start running tests...
-        - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
-        # How to make sure this only runs if tests pass?
-        - echo Tests successfully passed, will deploy to pip
-        - docker run $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-        - docker run $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
-
+      - echo Image tagged successfully
+      - echo Twine username is $TWINE_USERNAME
+      - echo Test var $TEST_VAR
+  post_build:
+    commands:
+      - echo Will start running tests...
+      - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
+      - echo Tests finished successfully
 
