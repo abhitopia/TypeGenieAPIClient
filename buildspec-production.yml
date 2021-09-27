@@ -18,7 +18,11 @@ phases:
       - AWS_ACCOUNT_ID=705303224111
       - AWS_DEFAULT_REGION=eu-west-1
       - IMAGE_REPO_NAME=typegenie/typegenie-api-client
+<<<<<<< HEAD
       - ENV=staging
+=======
+      - ENV=production
+>>>>>>> cicd_integration
       - aws --version
       - ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo Logging in to Amazon ECR...
@@ -41,4 +45,5 @@ phases:
       # How to make sure this only runs if tests pass?
       - echo Tests successfully passed, will deploy to pip
       - docker run $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-      - docker run $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
+      - docker run $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --repository testpypi --username $TWINE_USERNAME --password $TWINE_PASSWORD
+

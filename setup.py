@@ -7,8 +7,8 @@ with (Path(__file__).parent / "README.md").open("r") as fh:
 src_dir = str(Path(__file__).parent)
 
 setup(
-    name='typegenie_test_version',
-    version='0.1.5',
+    name='typegenie',
+    version='0.1.6',
     url="https://github.com/abhitopia/TypeGenieApiClient",
     author="abhitopia",
     author_email="hi@typegenie.net",

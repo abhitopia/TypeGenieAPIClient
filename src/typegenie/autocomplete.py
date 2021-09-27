@@ -1,8 +1,17 @@
 import time
+<<<<<<< HEAD
 from typing import List
 from random import randint, choice
 from .lib import User, Event
 
+=======
+from typing import List, Optional
+from random import randint, choice
+
+from .lib import User, Event
+
+
+>>>>>>> cicd_integration
 try:
     import colorama
     from colorama import Back as B, Fore as F, Style
@@ -10,10 +19,19 @@ try:
     from prompt_toolkit.completion import Completer, Completion
     from prompt_toolkit.document import Document
     from prompt_toolkit.application.current import get_app
+<<<<<<< HEAD
+=======
+    from prompt_toolkit.auto_suggest import Suggestion
+    from prompt_toolkit.key_binding import KeyBindings
+>>>>>>> cicd_integration
 except ImportError as e:
     raise Exception('Extra dependencies are required to use CLI tool. Use `pip install typegenie[with-cli]`').with_traceback(e.__traceback__)
 
 colorama.init()
+<<<<<<< HEAD
+=======
+bindings = KeyBindings()
+>>>>>>> cicd_integration
 
 
 def color(text, fore=F.RESET, back=B.RESET, reset=True):
@@ -28,6 +46,7 @@ def printc(text, fore=F.WHITE, back=B.RESET, reset=True):
 
 
 def text_changed(buffer):
+<<<<<<< HEAD
     buffer.start_completion(select_first=False)
 
 
@@ -36,6 +55,82 @@ def pre_run():
     buff = app.current_buffer
     buff.start_completion(select_first=False)
     # print('In the test!')
+=======
+    buffer.start_completion(select_first=True)
+
+
+def go_to_completion(self, index: Optional[int]) -> None:
+    """
+    NOTE: This over-rides prevents Document to be changes as we scroll over completions
+    Select a completion from the list of current completions.
+    """
+    assert self.complete_state
+
+    # Set new completion
+    state = self.complete_state
+    state.go_to_index(index)
+
+    # Note: We skipped the next steps
+    # Set text/cursor position
+    # new_text, new_cursor_position = state.new_text_and_position()
+    # self.document = Document(new_text, new_cursor_position)
+
+    # Instead we set a suggestion for the selected completion
+    if index is not None:
+        text = self.complete_state.current_completion.text
+        self.suggestion = Suggestion(text=text)
+        self.on_suggestion_set.fire()
+
+    # (changing text/cursor position will unset complete_state.)
+    self.complete_state = state
+
+
+@bindings.add('tab')
+def _(event):
+    """Full Accept """
+    buffer = event.app.current_buffer
+    if buffer.suggestion is not None:
+        buffer.insert_text(buffer.suggestion.text)
+
+
+def partial_accept(event):
+    buffer = event.app.current_buffer
+    if buffer.suggestion is not None:
+        text = buffer.suggestion.text
+        text_split = text.split(' ')
+        add = text_split[0]
+        add = add + ' ' if len(text_split) > 0 else add
+        buffer.insert_text(add)
+
+
+@bindings.add('s-tab', is_global=True)
+def _(event):
+    """Partial Accept"""
+    partial_accept(event)
+
+
+@bindings.add('s-right', is_global=True)
+def _(event):
+    """Partial Accept"""
+    partial_accept(event)
+
+
+def pre_run_unprompted():
+    app = get_app()
+    buff = app.current_buffer
+    buff.start_completion(select_first=False)
+    buff.on_text_changed.add_handler(text_changed)
+    # This line enabled showing completions like TypeGenie
+    buff.go_to_completion = go_to_completion.__get__(buff)
+
+
+def pre_run():
+    app = get_app()
+    buff = app.current_buffer
+    buff.on_text_changed.add_handler(text_changed)
+    # This line enabled showing completions like TypeGenie
+    buff.go_to_completion = go_to_completion.__get__(buff)
+>>>>>>> cicd_integration
 
 
 class TypeGenieCompleter(Completer):
@@ -51,17 +146,28 @@ class TypeGenieCompleter(Completer):
 
 
 class AutoComplete:
+<<<<<<< HEAD
     def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False, multiline=False):
+=======
+    def __init__(self, user, dialogue_dataset, interactive=True, unprompted=False, multiline=False, no_context=False):
+>>>>>>> cicd_integration
         self.user = user
         self.context = []
         self.dialogue_dataset = dialogue_dataset
         self.unprompted = unprompted
         self.multiline = multiline
+<<<<<<< HEAD
+=======
+        self.no_context = no_context
+>>>>>>> cicd_integration
         self.interactive = interactive
         self.session = PromptSession(complete_in_thread=True,
                                      complete_while_typing=True,
                                      completer=TypeGenieCompleter(user=self.user))
+<<<<<<< HEAD
         self.session.default_buffer.on_text_changed.add_handler(text_changed)
+=======
+>>>>>>> cicd_integration
 
     def sample_context_and_response(self):
         while True:
@@ -81,8 +187,15 @@ class AutoComplete:
                 printc('-' * 100, fore=F.WHITE)
                 context, remaining = self.sample_context_and_response()
                 self.session.completer.session_id = self.user.create_session()
+<<<<<<< HEAD
                 self.render_context(context)
                 self.context = context
+=======
+                if not self.no_context:
+                    self.render_context(context)
+                    self.context = context
+
+>>>>>>> cicd_integration
                 for i in range(len(remaining)):
                     event = remaining[i]
                     if event.event != 'MESSAGE':
@@ -100,7 +213,12 @@ class AutoComplete:
                     if not self.interactive:
                         break
                     event._value = response
+<<<<<<< HEAD
                     self.context.append(event)
+=======
+                    if not self.no_context:
+                        self.context.append(event)
+>>>>>>> cicd_integration
 
                 printc('-' * 100, fore=F.WHITE)
             except KeyboardInterrupt:
@@ -122,8 +240,18 @@ class AutoComplete:
                     printc('\nAgent: ' + event.value, fore=F.GREEN)
 
     def get_prediction(self):
+<<<<<<< HEAD
         self.session.completer.context = self.context
         text = self.session.prompt('Agent (with TypeGenie): ', pre_run=pre_run if self.unprompted else None,
+=======
+        if self.no_context:
+            self.session.completer.context = []
+        else:
+            self.session.completer.context = self.context
+        text = self.session.prompt('Agent (with TypeGenie): ',
+                                   pre_run=pre_run_unprompted if self.unprompted else pre_run,
+                                   key_bindings=bindings,
+>>>>>>> cicd_integration
                                    multiline=self.multiline)
         return text
 
