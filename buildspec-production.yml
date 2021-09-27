@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   secrets-manager:
-    TWINE_USERNAME: "PyPi/testAccount:username"
-    TWINE_PASSWORD: "PyPi/testAccount:password"
+    TWINE_USERNAME: "PyPi/mainAccount:username"
+    TWINE_PASSWORD: "PyPi/mainAccount:password"
 
 phases:
   install:
@@ -42,7 +42,7 @@ phases:
       - echo Tests successfully passed, will deploy to pip
       - rm -rf dist && mkdir -p dist
       - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --repository testpypi --username $TWINE_USERNAME --password $TWINE_PASSWORD
+      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
 
 
