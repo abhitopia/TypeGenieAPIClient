@@ -22,6 +22,7 @@ from box import Box
 @click.option('--interactive', is_flag=True, default=False, help="Set to continue interaction")
 @click.option('--unprompted', is_flag=True, default=False, help="Show completions even when unprompted")
 @click.option('--multiline', is_flag=True, default=False, help="Set to allow multiline completions")
+@click.option('--no-context', is_flag=True, default=False, help="Disabled passing any context")
 def main(**params):
     params = Box(params)
 
@@ -77,6 +78,7 @@ def main(**params):
                                 dialogue_dataset=dialogues,
                                 unprompted=params.unprompted,
                                 multiline=params.multiline,
+                                no_context=params.no_context,
                                 interactive=params.interactive)
 
     autocomplete.interact()
