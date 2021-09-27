@@ -24,6 +24,15 @@ from box import Box
 @click.option('--multiline', is_flag=True, default=False, help="Set to allow multiline completions")
 @click.option('--no-context', is_flag=True, default=False, help="Disabled passing any context")
 def main(**params):
+    """Simulate TypeGenie on your command line!
+
+    KeyBindings:
+    - Use arrow up or down to select a completion
+    - Use <TAB> to accept selected completion
+    - Use <SHIFT + TAB> to only accept the first word
+    - Use <CTL + C> to start a new dialogue
+    - Use <CTL + C> in succession to exit
+    """
     params = Box(params)
 
     if not params.production:
