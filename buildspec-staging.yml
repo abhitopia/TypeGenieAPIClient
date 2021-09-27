@@ -1,5 +1,10 @@
 version: 0.2
 
+env:
+  secrets-manager:
+    TWINE_USERNAME: "PyPi/testAccount:username"
+    TWINE_PASSWORD: "PyPi/testAccount:password"
+
 phases:
   install:
     commands:  # Install AWS cli, kubectl (needed for Helm) and Helm
@@ -25,18 +30,19 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Production.Dockerfile .
+      - docker build -t $REPOSITORY_URI:latest -f Production.Dockerfile .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_HASH
-
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Will start running tests...
-      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
-      - echo Tests successfully passed, will bump version
-      - echo bump version
+      - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
+      # How to make sure this only runs if tests pass?
+      - echo Tests successfully passed, will deploy to pip
+      - rm -rf dist && mkdir -p dist
+      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
+      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --repository testpypi --username $TWINE_USERNAME --password $TWINE_PASSWORD
 
 
-# The below needs to be completed by Omkar
-#      - "helm upgrade -i <RELEASE_NAME> <PATH_TO_HELM_FILES> -f ./path/to/kubernetes/values/values.$ENV.yaml --set image.tag=$CODEBUILD_RESOLVED_SOURCE_VERSION"
+
