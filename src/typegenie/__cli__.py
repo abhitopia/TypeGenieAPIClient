@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import random
+
 import requests
 from .lib import Deployment, Dialogue, authenticator
 from .autocomplete import AutoComplete
@@ -82,7 +84,7 @@ def main(**params):
             data = json.load(output_file.open('r'))
 
         for d in data:
-            if len(dialogues) < params.num_dialogues:
+            if random.random() < 0.05 and len(dialogues) < params.num_dialogues:
                 dialogues.append(Dialogue.from_dict(d))
         else:
             if len(dialogues) >= params.num_dialogues:
