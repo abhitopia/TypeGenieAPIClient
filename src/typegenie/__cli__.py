@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import random
+
 import requests
 from .lib import Deployment, Dialogue, authenticator
 from .autocomplete import AutoComplete
@@ -14,18 +16,33 @@ from box import Box
 @click.option('-t', '--token', type=str, required=False, help="Deployment access token.")
 @click.option('-dsi', '--dataset_id', type=str, required=True, help="DatasetID to be used for testing.")
 @click.option('-ui', '--user-id', type=str, required=True, help="User ID within the Deployment")
-@click.option('--production', is_flag=True, default=False, help="By default, sandbox environment is used. Set this "
-                                                                "flag to use production environment")
+@click.option('--sandbox', is_flag=True, default=False, help="By default, production environment is used. Set this "
+                                                                "flag to use sandbox environment")
 @click.option('--cache-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), default='/tmp',
               help="Path where dataset is downloaded")
 @click.option('-n', '--num-dialogues', default=500, type=int, help="Number of dialogues to load")
 @click.option('--interactive', is_flag=True, default=False, help="Set to continue interaction")
 @click.option('--unprompted', is_flag=True, default=False, help="Show completions even when unprompted")
 @click.option('--multiline', is_flag=True, default=False, help="Set to allow multiline completions")
+@click.option('--no-context', is_flag=True, default=False, help="Disabled passing any context")
 def main(**params):
+    """Simulate TypeGenie on your command line!
+
+    KeyBindings:
+
+    - Arrow <Up> or <DOWN> to select a completion
+
+    - <TAB> to accept the selected completion
+
+    - <SHIFT+TAB> to only accept the first word of the selected completion
+
+    - <CTL+C> to start a new dialogue
+
+    - <CTL+C> in succession to exit
+    """
     params = Box(params)
 
-    if not params.production:
+    if params.sandbox:
         authenticator.enable_sandbox()
 
     if params.token is None:
@@ -67,7 +84,7 @@ def main(**params):
             data = json.load(output_file.open('r'))
 
         for d in data:
-            if len(dialogues) < params.num_dialogues:
+            if random.random() < 0.05 and len(dialogues) < params.num_dialogues:
                 dialogues.append(Dialogue.from_dict(d))
         else:
             if len(dialogues) >= params.num_dialogues:
@@ -77,6 +94,7 @@ def main(**params):
                                 dialogue_dataset=dialogues,
                                 unprompted=params.unprompted,
                                 multiline=params.multiline,
+                                no_context=params.no_context,
                                 interactive=params.interactive)
 
     autocomplete.interact()
