@@ -30,6 +30,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
+      - docker build -t version-bumper-test:latest -f Production.Dockerfile .
       - docker build -t $REPOSITORY_URI:latest -f Tests.Dockerfile .
       - echo Will now tag image
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
@@ -40,9 +41,9 @@ phases:
     commands:
       - echo Will start running tests...
       - echo Typegenie current version is $CURRENT_TG_CLI_VERSION
-      - bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
-      - git add setup.py
-      - git commit -m "Codebuild bumpversion"
-      - git push origin cicd_integration
+      - docker run version-bumper-test:latest bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
+      - docker run version-bumper-test:latest git add setup.py
+      - docker run version-bumper-test:latest git commit -m "Codebuild bumpversion"
+      - docker run version-bumper-test:latest git push origin cicd_integration
       - echo Version successfully bumped
 
