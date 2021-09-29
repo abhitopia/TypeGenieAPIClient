@@ -37,6 +37,6 @@ phases:
     commands:
       - echo Will start running tests...
       - echo Typegenie current version is $CURRENT_TG_CLI_VERSION
-      - bumpversion --current-version $$CURRENT_TG_CLI_VERSION patch setup.py
+      - bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
       - git status
 
