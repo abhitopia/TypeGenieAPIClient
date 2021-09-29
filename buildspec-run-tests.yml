@@ -38,5 +38,8 @@ phases:
       - echo Will start running tests...
       - echo Typegenie current version is $CURRENT_TG_CLI_VERSION
       - bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
-      - git status
+      - git add setup.py
+      - git commit -m "Codebuild bumpversion"
+      - git push origin cicd_integration
+      - echo Version successfully bumped
 
