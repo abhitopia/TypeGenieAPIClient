@@ -49,6 +49,6 @@ phases:
       - docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git checkout cicd_integration
       - docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git commit -m "Codebuild bumpversion"
       - docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git branch
-#      - docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git push
+      - docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git push origin cicd_integration
       - echo Version successfully bumped
 
