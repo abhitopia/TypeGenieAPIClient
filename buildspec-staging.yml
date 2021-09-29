@@ -28,14 +28,25 @@ phases:
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Production.Dockerfile .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_HASH
-
+      - echo Will start running tests...
+      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Will start running tests...
-      - docker run -it $REPOSITORY_URI:$IMAGE_TAG python tests.py
-      - echo Tests successfully passed, will bump version
-      - echo bump version
+      -|
+      if [ "$CODEBUILD_BUILD_SUCCEEDING" == 1 ]; then
+        rm -rf dist && mkdir -p docker_repo;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest ls;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git fetch;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git add setup.py;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git checkout main;
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git commit -m "Codebuild bumpversion";
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git push origin main;
+        echo Version successfully bumped
+      else
+        echo Unit tests did not pass... will not deploy on PyPi
+      fi
 
 
 # The below needs to be completed by Omkar

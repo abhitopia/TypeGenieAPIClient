@@ -33,17 +33,24 @@ phases:
       - docker build -t $REPOSITORY_URI:latest -f Production.Dockerfile .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$COMMIT_HASH
+      - echo Will start running tests...
+      - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
 
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Will start running tests...
-      - docker run $REPOSITORY_URI:$IMAGE_TAG python tests.py
-      # How to make sure this only runs if tests pass?
-      - echo Tests successfully passed, will deploy to pip
-      - rm -rf dist && mkdir -p dist
-      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
-      - docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
+      - |
+      # In case build goes well, leave production deployed and push image with production tag
+      if [ "$CODEBUILD_BUILD_SUCCEEDING" == 1 ]; then
+        echo Tests successfully passed, will deploy to pip
+        rm -rf dist && mkdir -p dist
+        docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
+        docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
+      else
+        echo Unit tests did not pass... will not deploy on PyPi
+      fi
+
+
 
 
 

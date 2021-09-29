@@ -3,6 +3,7 @@ WORKDIR /root/TypeGenieAPIClient
 COPY ./README.md ./README.md
 COPY ./src ./src
 COPY ./setup.py ./setup.py
+COPY ./tests.py ./tests.py
 RUN apt install -y git
 RUN git config --global user.email "renato@typegenie.net"
 RUN git config --global user.name "renatomrochatg"
