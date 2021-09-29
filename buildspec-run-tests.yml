@@ -36,7 +36,6 @@ phases:
       - echo Image tagged successfully
       - echo Twine username is $TWINE_USERNAME
       - echo Test var $TEST_VAR
-
   post_build:
     commands:
       - echo Will start running tests...
