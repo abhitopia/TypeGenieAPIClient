@@ -3,7 +3,6 @@ WORKDIR /root/TypeGenieAPIClient
 COPY ./README.md ./README.md
 COPY ./src ./src
 COPY ./setup.py ./setup.py
-COPY ./tests.py ./tests.py
 RUN python setup.py install
 RUN pip install wheel
 RUN pip install twine
