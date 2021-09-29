@@ -3,6 +3,9 @@ WORKDIR /root/TypeGenieAPIClient
 COPY ./README.md ./README.md
 COPY ./src ./src
 COPY ./setup.py ./setup.py
+RUN apt install -y git
+RUN git config --global user.email "renato@typegenie.net"
+RUN git config --global user.name "renatomrochatg"
 RUN python setup.py install
 RUN pip install wheel
 RUN pip install twine
