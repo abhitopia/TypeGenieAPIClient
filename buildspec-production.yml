@@ -42,7 +42,12 @@ phases:
       - |
       # In case build goes well, leave production deployed and push image with production tag
       if [ "$CODEBUILD_BUILD_SUCCEEDING" == 1 ]; then
-        echo Tests successfully passed, will deploy to pip
+        echo Tests successfully passed, will bump version and deploy to pip
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git remote set-url origin https://$GITHUB_USER:$OAUTH_TOKEN@github.com/abhitopia/TypeGenieAPIClient.git
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest bumpversion --current-version $CURRENT_TG_CLI_VERSION minor setup.py
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git add setup.py
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git commit -m "Codebuild bumpversion"
+        docker run -v $(pwd):/root/TypeGenieAPIClient version-bumper-test:latest git push
         rm -rf dist && mkdir -p dist
         docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG python setup.py sdist bdist_wheel
         docker run -v dist:/root/TypeGenieAPIClient/dist $REPOSITORY_URI:$IMAGE_TAG twine upload dist/* --username $TWINE_USERNAME --password $TWINE_PASSWORD
