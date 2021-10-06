@@ -35,6 +35,7 @@ phases:
       - CURRENT_TG_CLI_VERSION=$(echo $(pip list | grep typegenie) | awk -F" " '{print $2}')
   build:
     commands:
+      - DATE=$(date '+%Y-%m-%d-%H-%M')
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t version-bumper-$ENV:latest -f Production.Dockerfile .
@@ -50,7 +51,7 @@ phases:
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git add setup.py
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git commit -m "Codebuild bumpversion"
-          docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git tag staging-release-$IMAGE_TAG
+          docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git tag $ENV-$DATE-$IMAGE_TAG
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git push origin main  && git push --tags origin main
           echo Version successfully bumped
         else
