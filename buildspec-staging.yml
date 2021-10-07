@@ -46,7 +46,7 @@ phases:
   post_build:
     commands:
       - echo Build completed on `date`
-      -|
+      - |
         if [ "$CODEBUILD_BUILD_SUCCEEDING" == 1 ]; then
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git remote set-url origin https://$GITHUB_USER:$OAUTH_TOKEN@$REPO_URL
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest bumpversion --current-version $CURRENT_TG_CLI_VERSION patch setup.py
