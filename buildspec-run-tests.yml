@@ -34,7 +34,7 @@ phases:
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t tester-container:latest -f Tests.Dockerfile .
-      - docker run -it tester-container:latest python tests.py
+      - docker run tester-container:latest python tests.py
   post_build:
     commands:
       - echo Build completed on `date`
