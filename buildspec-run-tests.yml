@@ -51,7 +51,7 @@ phases:
           gh auth login --with-token < token.txt
           gh release create $UPDATED_VERSION --title "CICD test release $UPDATED_VERSION" --notes "Release automatically created through cicd pipeline"
           echo Version successfully bumped
-          else
+        else
           echo Unit tests did not pass... will not bump version
         fi
 
