@@ -42,7 +42,7 @@ phases:
       - docker build -t version-bumper-$ENV:latest -f Production.Dockerfile .
       - docker build -t tester-container:latest -f Tests.Dockerfile .
       - echo Will start running tests...
-      - docker run -it tester-container:latest python tests.py
+      - docker run tester-container:latest python tests.py
   post_build:
     commands:
       - echo Build completed on `date`
