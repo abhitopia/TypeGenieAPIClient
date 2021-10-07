@@ -54,6 +54,10 @@ phases:
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git commit -m "Codebuild bumpversion"
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git tag $ENV-$DATE-$IMAGE_TAG
           docker run -v $(pwd):/root/$REPO_NAME version-bumper-$ENV:latest git push origin main  && git push --tags origin main
+          touch token.txt
+          echo $OAUTH_TOKEN >> token.txt
+          gh auth login --with-token < token.txt
+          gh release create $UPDATED_VERSION --title "CICD test release $UPDATED_VERSION" --notes "Release automatically created through cicd pipeline"
           echo Version successfully bumped
         else
           echo Unit tests did not pass... will not bump version
