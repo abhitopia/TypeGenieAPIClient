@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 
 creds.py
+
+codebuild_build.sh

@@ -1,6 +1,7 @@
 version: 0.2
 
 env:
+  shell: bash
   git-credential-helper: yes
   secrets-manager:
     OAUTH_TOKEN: " git_oauth_token:oauth_token"
@@ -36,7 +37,7 @@ phases:
       - docker run -it tester-container:latest python tests.py
   post_build:
     commands:
-    - echo Build completed on `date`
+      - echo Build completed on `date`
       -|
         if [ "$CODEBUILD_BUILD_SUCCEEDING" == 1 ]; then
           echo Tests successfully passed

@@ -2,6 +2,7 @@ version: 0.2
 
 
 env:
+  shell: bash
   git-credential-helper: yes
   secrets-manager:
     OAUTH_TOKEN: " git_oauth_token:oauth_token"

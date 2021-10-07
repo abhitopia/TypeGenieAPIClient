@@ -1,6 +1,7 @@
 version: 0.2
 
 env:
+  shell: bash
   secrets-manager:
     TWINE_USERNAME: "PyPi/mainAccount:username"
     TWINE_PASSWORD: "PyPi/mainAccount:password"
